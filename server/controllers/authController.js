@@ -84,6 +84,20 @@ const authController = {
             console.error(err);
             res.status(500).send({ msg: "Bad Request", err });
         }
+    },
+    getAllAdmins: async (req, res) => {
+        try {
+            // Only allow admins to access this endpoint
+            if (req.user.role !== 'admin') {
+                return res.status(403).json({ msg: "Not authorized" });
+            }
+            
+            const admins = await User.find({ role: 'admin' }).select('_id username email');
+            res.status(200).json({ admins });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: "Internal server error" });
+        }
     }
 };
 

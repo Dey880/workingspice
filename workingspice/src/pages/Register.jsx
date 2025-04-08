@@ -10,6 +10,7 @@ export default function Register() {
     const [msg, setMsg] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -27,6 +28,10 @@ export default function Register() {
             
             setMsg(response.data.msg || 'Registration successful!')
             setError(false)
+            
+            setTimeout(() => {
+                navigate('/dashboard')
+            }, 2000)
             
         } catch (err) {
             setError(true)

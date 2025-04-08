@@ -1,3 +1,4 @@
+Login.jsx
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -8,6 +9,7 @@ export default function Login() {
     const [msg, setMsg] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -23,6 +25,10 @@ export default function Login() {
             
             setMsg(response.data.msg || 'Login successful!')
             setError(false)
+            
+            setTimeout(() => {
+                navigate('/dashboard')
+            }, 2000)
             
         } catch (err) {
             setError(true)

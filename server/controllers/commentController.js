@@ -7,10 +7,15 @@ const commentController = {
     try {
       const { content, ticketId } = req.body;
       
-      // Check if the ticket exists
+      // Check if the ticket exists and is not closed
       const ticket = await Ticket.findById(ticketId);
       if (!ticket) {
         return res.status(404).json({ msg: "Ticket not found" });
+      }
+      
+      // Prevent comments on closed tickets
+      if (ticket.status === 'closed') {
+        return res.status(400).json({ msg: "Cannot add comments to closed tickets" });
       }
       
       const comment = new Comment({

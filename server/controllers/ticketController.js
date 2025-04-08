@@ -128,6 +128,32 @@ const ticketController = {
       res.status(500).json({ msg: "Internal server error" });
     }
   },
+
+  // Get tickets for current user
+  getUserTickets: async (req, res) => {
+    try {
+      // For regular users: only tickets they created
+      // For admins: can include assigned tickets as well
+      const query = { createdBy: req.user.id };
+      
+      // If user is admin, also get tickets assigned to them
+      if (req.user.role === 'admin') {
+        query.$or = [
+          { createdBy: req.user.id }, 
+          { assignedTo: req.user.id }
+        ];
+      }
+      
+      const tickets = await Ticket.find(query)
+        .populate("createdBy", "username email")
+        .populate("assignedTo", "username email");
+
+      res.status(200).json({ tickets });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  },
 };
 
 module.exports = ticketController;
