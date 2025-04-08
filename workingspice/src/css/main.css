@@ -1,0 +1,6 @@
+@import './design-system.css';
+@import './components/navbar.css';
+@import './pages/dashboard.css';
+@import './pages/ticket-detail.css';
+@import './pages/auth.css';
+@import './pages/admin.css';

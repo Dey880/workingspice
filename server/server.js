@@ -6,11 +6,10 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 require('dotenv').config();
 
-
 const authRoutes = require('./routes/authRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const commentRoutes = require('./routes/commentRoutes');
-
+const adminRoutes = require('./routes/adminRoutes'); // Add this line
 
 const app = express();
 
@@ -33,7 +32,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/comments', commentRoutes);
-
+app.use('/api/admin', adminRoutes); // Add this line
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');

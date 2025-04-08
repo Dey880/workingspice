@@ -1,7 +1,6 @@
-Login.jsx
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function Login() {
     const [email, setEmail] = useState('')
@@ -39,11 +38,11 @@ export default function Login() {
     }
 
     return (
-        <div>
+        <div className="auth-container">
             <h1>Login</h1>
             
-            <form onSubmit={handleSubmit}>
-                <div>
+            <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input 
                         type="email" 
@@ -55,7 +54,7 @@ export default function Login() {
                     />
                 </div>
                 
-                <div>
+                <div className="form-group">
                     <label htmlFor="password">Password</label>
                     <input 
                         type="password" 
@@ -76,10 +75,14 @@ export default function Login() {
             </form>
             
             {msg && (
-                <div>
+                <div className={`auth-message ${error ? 'error' : 'success'}`}>
                     {msg}
                 </div>
             )}
+            
+            <div className="auth-links">
+                <p>Don't have an account? <Link to="/register">Register</Link></p>
+            </div>
         </div>
     );
 }

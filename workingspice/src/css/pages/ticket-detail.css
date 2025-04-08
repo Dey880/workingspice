@@ -1,0 +1,312 @@
+.ticket-detail {
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease;
+}
+
+.ticket-detail h1 {
+  font-size: 1.8rem;
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-lg);
+  word-break: break-word;
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: var(--spacing-sm);
+}
+
+.ticket-info {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.ticket-info p {
+  margin-bottom: var(--spacing-sm);
+}
+
+.ticket-info p strong {
+  color: var(--primary);
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ticket-description {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.ticket-description h2 {
+  color: var(--primary);
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.ticket-description p {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.admin-actions {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--accent);
+}
+
+.admin-actions h3 {
+  color: var(--primary-dark);
+  font-size: 1.2rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.assign-admin,
+.edit-priority,
+.edit-title,
+.edit-description {
+  margin-bottom: var(--spacing-lg);
+}
+
+.assign-admin label,
+.edit-priority label,
+.edit-title label,
+.edit-description label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.assign-admin select,
+.edit-priority select {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%235C7183' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+.edit-title input,
+.edit-description textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-main);
+}
+
+.edit-title input:focus,
+.edit-description textarea:focus,
+.assign-admin select:focus,
+.edit-priority select:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(94, 158, 208, 0.15);
+}
+
+.edit-description textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.edit-title button,
+.edit-description button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.status-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.status-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.status-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-buttons button:nth-child(1) {
+  background-color: var(--status-open);
+  color: white;
+}
+
+.status-buttons button:nth-child(2) {
+  background-color: var(--status-in-progress);
+  color: var(--text-primary);
+}
+
+.status-buttons button:nth-child(3) {
+  background-color: var(--status-resolved);
+  color: white;
+}
+
+.status-buttons button:nth-child(4) {
+  background-color: var(--status-closed);
+  color: white;
+}
+
+.add-comment {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-comment h2 {
+  color: var(--primary);
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.add-comment textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-main);
+  resize: vertical;
+}
+
+.add-comment textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(94, 158, 208, 0.15);
+}
+
+.add-comment button {
+  padding: 0.5rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.closed-ticket-message {
+  color: var(--text-secondary);
+  padding: var(--spacing-md);
+  background-color: #f8f9fa;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--status-closed);
+}
+
+.comments-section {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.comments-section h2 {
+  color: var(--primary);
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.comment {
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  background-color: var(--background);
+  transition: transform var(--transition-fast);
+}
+
+.comment:hover {
+  transform: translateX(4px);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--border);
+}
+
+.comment-header strong {
+  color: var(--primary-dark);
+}
+
+.comment-header span {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.comment p {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.back-button {
+  margin-top: var(--spacing-xl);
+}
+
+.back-button button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.back-button button:before {
+  content: "←";
+  font-size: 1.1rem;
+}
+
+.back-button button:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}

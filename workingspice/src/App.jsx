@@ -8,6 +8,7 @@ import TicketDetail from './pages/TicketDetail';
 import CreateTicket from './pages/CreateTicket';
 import LandingPage from './pages/LandingPage';
 import NotFound from './pages/NotFound';
+import AdminPortal from './pages/AdminPortal';
 
 export default function App() {
   return  (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path='/profile' element={<Profile />} />
         <Route path='/tickets/:id' element={<TicketDetail />} />
         <Route path='/create-ticket' element={<CreateTicket />} />
+        <Route path='/admin' element={<AdminPortal />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

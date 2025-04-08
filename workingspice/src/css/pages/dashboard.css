@@ -1,0 +1,181 @@
+.dashboard {
+  animation: fadeIn 0.5s ease;
+}
+
+.dashboard h1 {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-dark);
+}
+
+.dashboard h2 {
+  font-size: 1.5rem;
+  margin: var(--spacing-lg) 0 var(--spacing-md);
+  color: var(--primary);
+}
+
+.dashboard p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+}
+
+.create-ticket-button {
+  display: inline-block;
+  margin-bottom: var(--spacing-xl);
+  padding: 0.75rem 1.5rem;
+  background-color: var(--accent);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.create-ticket-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.status-tabs button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.status-tabs button.active {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+.status-tabs button:hover:not(.active) {
+  background-color: var(--border);
+}
+
+.badge {
+  display: inline-block;
+  background-color: var(--primary-light);
+  color: white;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  margin-left: 5px;
+}
+
+.tickets-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.ticket-card {
+  position: relative;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  border-left: 5px solid transparent;
+  height: 100%;
+}
+
+.ticket-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.ticket-card.priority-low {
+  border-left-color: var(--priority-low);
+}
+
+.ticket-card.priority-medium {
+  border-left-color: var(--priority-medium);
+}
+
+.ticket-card.priority-high {
+  border-left-color: var(--priority-high);
+}
+
+.ticket-card.priority-critical {
+  border-left-color: var(--priority-critical);
+}
+
+.ticket-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: var(--spacing-md);
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.ticket-card p {
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.ticket-card .status,
+.ticket-card .priority {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.ticket-card .status.open {
+  background-color: var(--status-open);
+  color: white;
+}
+
+.ticket-card .status.in-progress {
+  background-color: var(--status-in-progress);
+  color: var(--text-primary);
+}
+
+.ticket-card .status.resolved {
+  background-color: var(--status-resolved);
+  color: white;
+}
+
+.ticket-card .status.closed {
+  background-color: var(--status-closed);
+  color: white;
+}
+
+.ticket-card button {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.ticket-card button:hover {
+  background-color: var(--primary-dark);
+}

@@ -10,6 +10,8 @@ export default function TicketDetail() {
     const [newComment, setNewComment] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [editTitle, setEditTitle] = useState('');
+    const [editDescription, setEditDescription] = useState('');
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -143,6 +145,30 @@ export default function TicketDetail() {
         }
     };
 
+    // Handle ticket update (for admins)
+    const handleTicketUpdate = async (field, value) => {
+        // Don't update if value is empty or unchanged
+        if (!value || value === ticket[field]) return;
+        
+        try {
+            const updateData = { [field]: value };
+            const response = await axios.put(
+                `${import.meta.env.VITE_API_URL}/tickets/${id}`,
+                updateData,
+                { withCredentials: true }
+            );
+            
+            setTicket(response.data.ticket);
+            
+            // Reset the edit fields
+            if (field === 'title') setEditTitle('');
+            if (field === 'description') setEditDescription('');
+            
+        } catch (err) {
+            setError(err.response?.data?.msg || `Error updating ticket ${field}`);
+        }
+    };
+
     if (loading) {
         return <div>Loading ticket details...</div>;
     }
@@ -191,6 +217,49 @@ export default function TicketDetail() {
                                 </option>
                             ))}
                         </select>
+                    </div>
+                    
+                    {/* Edit ticket properties */}
+                    <div className="edit-ticket-properties">
+                        <h3>Edit Ticket</h3>
+                        
+                        {/* Edit priority */}
+                        <div className="edit-priority">
+                            <label htmlFor="edit-priority">Priority:</label>
+                            <select 
+                                id="edit-priority" 
+                                value={ticket.priority}
+                                onChange={(e) => handleTicketUpdate('priority', e.target.value)}
+                            >
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        
+                        {/* Edit title */}
+                        <div className="edit-title">
+                            <label htmlFor="edit-title">Title:</label>
+                            <input
+                                type="text"
+                                id="edit-title"
+                                value={editTitle || ticket.title}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                            />
+                            <button onClick={() => handleTicketUpdate('title', editTitle)}>Update Title</button>
+                        </div>
+                        
+                        {/* Edit description */}
+                        <div className="edit-description">
+                            <label htmlFor="edit-description">Description:</label>
+                            <textarea
+                                id="edit-description"
+                                value={editDescription || ticket.description}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                            ></textarea>
+                            <button onClick={() => handleTicketUpdate('description', editDescription)}>Update Description</button>
+                        </div>
                     </div>
                     
                     <h3>Update Status</h3>
