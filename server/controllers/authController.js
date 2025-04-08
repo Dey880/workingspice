@@ -8,17 +8,19 @@ const authController = {
         const { email, password, repeatPassword, username } = req.body;
         try {
             const role = 'user';
+            const emailLowercase = email.toLowerCase();
+            
             if (password === repeatPassword) {
                 try {
                     const hash = await argon2.hash(password);
                     const user = new User({
-                        email,
+                        email: emailLowercase,
                         username,
                         password: hash,
                         role,
                     });
                     await user.save();
-                    const jwtToken = createJwt(email, role);
+                    const jwtToken = createJwt(emailLowercase, role);
                     await createCookie(res, jwtToken);
                     res.status(200).json({msg: "Successfully created user", user});
                 } catch (err) {
@@ -36,7 +38,9 @@ const authController = {
     login: async (req, res) => {
         const { email, password } = req.body;
         try {
-            const user = await User.findOne({ email });
+            const emailLowercase = email.toLowerCase();
+            
+            const user = await User.findOne({ email: emailLowercase });
             if (!user) {
                 return res.status(401).json({msg: "Invalid credentials"});
             }
@@ -44,7 +48,7 @@ const authController = {
             let hashedPassword = user.password;
             const isValid = await argon2.verify(hashedPassword, password);
             if (isValid) {
-                const jwtToken = createJwt(email, role);
+                const jwtToken = createJwt(emailLowercase, role);
                 await createCookie(res, jwtToken);
                 res.status(200).json({msg: "Successfully logged in", user});
             } else {
