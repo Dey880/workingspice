@@ -9,8 +9,18 @@ import CreateTicket from './pages/CreateTicket';
 import LandingPage from './pages/LandingPage';
 import NotFound from './pages/NotFound';
 import AdminPortal from './pages/AdminPortal';
+import { useSettings } from './contexts/SettingsContext';
+import { useEffect } from 'react';
 
 export default function App() {
+  const { settings } = useSettings();
+  
+  useEffect(() => {
+    if (settings.siteName) {
+      document.title = settings.siteName;
+    }
+  }, [settings.siteName]);
+  
   return  (
     <div className='wrapper'>
       <Routes>

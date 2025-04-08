@@ -14,6 +14,7 @@ const TicketSchema = new Schema({
     enum: ["low", "medium", "high", "critical"],
     default: "medium",
   },
+  category: { type: String }, // Add this line for categories
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

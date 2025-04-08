@@ -153,6 +153,10 @@ export default function AdminPortal() {
             setSettingsUpdateMsg('Settings updated successfully');
             setSettings(response.data.settings);
             
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            
         } catch (err) {
             setSettingsUpdateMsg(err.response?.data?.msg || 'Error updating settings');
         } finally {

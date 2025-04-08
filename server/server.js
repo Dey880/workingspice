@@ -9,7 +9,9 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const commentRoutes = require('./routes/commentRoutes');
-const adminRoutes = require('./routes/adminRoutes'); // Add this line
+const adminRoutes = require('./routes/adminRoutes');
+const settingsRoutes = require('./routes/settingsRoutes'); // Add this line
+const maintenanceMode = require('./middleware/maintenanceMode');
 
 const app = express();
 
@@ -27,12 +29,15 @@ mongoose.connect(process.env.DB_URL);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(maintenanceMode);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/admin', adminRoutes); // Add this line
+app.use('/api/admin', adminRoutes);
+app.use('/api/settings', settingsRoutes); // Add this line
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');

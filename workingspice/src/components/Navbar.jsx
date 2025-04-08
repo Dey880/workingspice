@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useSettings } from '../contexts/SettingsContext';
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+    const { settings } = useSettings();
 
     useEffect(() => {
         // Check if user is logged in
@@ -28,7 +30,9 @@ export default function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/">Workingspice</Link>
+                <Link to="/" style={{ content: 'none' }} className="custom-brand-link">
+                    <span className="logo-container">{settings?.logo || '⚡'}</span> {settings?.siteName || 'WorkingSpice Helpdesk'}
+                </Link>
             </div>
             <div className="navbar-links">
                 {!loading && (
@@ -83,12 +87,14 @@ export default function Navbar() {
                                 >
                                     Login
                                 </Link>
-                                <Link 
-                                    to="/register"
-                                    className={location.pathname === '/register' ? 'active' : ''}
-                                >
-                                    Register
-                                </Link>
+                                {settings.allowPublicRegistration && (
+                                    <Link 
+                                        to="/register"
+                                        className={location.pathname === '/register' ? 'active' : ''}
+                                    >
+                                        Register
+                                    </Link>
+                                )}
                             </>
                         )}
                     </>

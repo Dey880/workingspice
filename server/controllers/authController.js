@@ -2,11 +2,18 @@ const User = require('../models/User');
 const argon2 = require('argon2');
 const createJwt = require('../utils/createJwt');
 const createCookie = require('../utils/createCookie');
+const Settings = require('../models/Settings');
 
 const authController = {
     register: async (req, res) => {
         const { email, password, repeatPassword, username } = req.body;
         try {
+            // Check if public registration is allowed
+            const settings = await Settings.getSettings();
+            if (!settings.allowPublicRegistration) {
+                return res.status(403).json({ msg: "Public registration is currently disabled" });
+            }
+            
             const role = 'user';
             const emailLowercase = email.toLowerCase();
             

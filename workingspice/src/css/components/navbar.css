@@ -72,3 +72,13 @@
     padding: var(--spacing-xs);
   }
 }
+
+/* Add this to your navbar.css file */
+.custom-brand-link::before {
+  content: none !important;
+}
+
+.logo-container {
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
