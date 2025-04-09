@@ -5,25 +5,33 @@ async function verifyJwt(req, res, next) {
     const token = req.cookies.jwt;
 
     if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        console.log('No token provided');
+        return res.status(401).json({ message: 'Unauthorized: No token' });
     }
 
+    let decoded;
+    let user;
+
     try {
-        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        decoded = await jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
-        const user = await User.findOne({ email: decoded.email });
+        user = await User.findOne({ email: decoded.email });
 
         if (!user) {
-            return res.status(401).json({ message: 'Unauthorized' });
+            console.log('User not found:', decoded.email);
+            return res.status(401).json({ message: 'Unauthorized: User not found' });
         }
-        
+
         req.user.id = user._id;
         next();
     } catch (error) {
-        console.log(user);
-        console.log(token);
-        console.log(decoded);
-        return res.status(401).json({ message: 'Unauthorized' });
+        console.log('Error verifying token or finding user:', error);
+        console.log('Token:', token);
+        console.log('Decoded:', decoded);
+        console.log('User:', user);
+
+        return res.status(401).json({ message: 'Unauthorized: Invalid token or user' });
     }
 }
+
 module.exports = verifyJwt;
