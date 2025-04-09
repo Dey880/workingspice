@@ -97,6 +97,12 @@ export default function Navbar() {
                                 )}
                             </>
                         )}
+                        <Link 
+                            to="/help"
+                            className={location.pathname === '/help' ? 'active' : ''}
+                        >
+                            Help & FAQ
+                        </Link>
                     </>
                 )}
             </div>

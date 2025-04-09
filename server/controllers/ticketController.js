@@ -95,7 +95,7 @@ const ticketController = {
   // Update a ticket
   updateTicket: async (req, res) => {
     try {
-      const { title, description, status, priority, assignedTo } = req.body;
+      const { title, description, status, priority, assignedTo, supportLine } = req.body;
 
       const ticket = await Ticket.findById(req.params.id);
 
@@ -131,6 +131,7 @@ const ticketController = {
           status: status || ticket.status,
           priority: priority || ticket.priority,
           assignedTo: assignedTo || ticket.assignedTo,
+          supportLine: supportLine || ticket.supportLine,
           updatedAt: Date.now(),
         },
         { new: true }

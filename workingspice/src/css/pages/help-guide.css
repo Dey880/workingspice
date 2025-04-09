@@ -1,0 +1,168 @@
+.help-guide-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  animation: fadeIn 0.5s ease;
+}
+
+.help-guide-container h1 {
+  font-size: 2rem;
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--primary-light);
+  text-align: center;
+}
+
+.guide-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.guide-tabs button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.guide-tabs button.active {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+.guide-tabs button:hover:not(.active) {
+  background-color: var(--border);
+}
+
+.guide-content {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.guide-section h2 {
+  color: var(--primary-dark);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.5rem;
+}
+
+.guide-section p {
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+}
+
+.accordion-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+}
+
+.accordion-item h3 {
+  background-color: var(--background);
+  padding: var(--spacing-md);
+  margin: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.accordion-item h3:hover {
+  background-color: var(--background-light);
+}
+
+.toggle-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.accordion-content {
+  padding: var(--spacing-lg);
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.accordion-content ul, 
+.accordion-content ol {
+  margin-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.accordion-content ul li, 
+.accordion-content ol li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.5;
+}
+
+.tip-box {
+  background-color: rgba(94, 158, 208, 0.1);
+  border: 1px solid rgba(94, 158, 208, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.sample-tickets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.sample-ticket {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.sample-ticket h3 {
+  background-color: var(--primary-light);
+  color: white;
+  padding: var(--spacing-md);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ticket-details, 
+.ticket-response {
+  padding: var(--spacing-md);
+}
+
+.ticket-response {
+  background-color: rgba(14, 173, 105, 0.05);
+  border-top: 1px solid var(--border);
+}
+
+.ticket-response h4 {
+  color: var(--status-resolved);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .guide-tabs {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .guide-tabs button {
+    text-align: left;
+  }
+  
+  .guide-content {
+    padding: var(--spacing-md);
+  }
+}

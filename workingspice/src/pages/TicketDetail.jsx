@@ -106,6 +106,7 @@ export default function TicketDetail() {
     // Update the supportLine state when the ticket loads
     useEffect(() => {
         if (ticket) {
+            console.log('Updating supportLine state from ticket:', ticket.supportLine);
             setSupportLine(ticket.supportLine || 'first-line');
         }
     }, [ticket]);
@@ -168,10 +169,25 @@ export default function TicketDetail() {
 
     // Handle ticket update (for admins)
     const handleTicketUpdate = async (field, value) => {
-        // Don't update if value is empty or unchanged
-        if (!value || value === ticket[field]) return;
+        // Add debug logs
+        console.log('handleTicketUpdate called with:', field, value);
+        console.log('Current ticket[field]:', ticket[field]);
+        console.log('supportLine state value:', supportLine);
+        
+        // Don't update if value is empty
+        if (!value) {
+            console.log('Update canceled: value is empty');
+            return;
+        }
+        
+        // For supportLine, always allow the update even if it appears unchanged
+        if (field !== 'supportLine' && value === ticket[field]) {
+            console.log('Update canceled: value unchanged and not supportLine');
+            return;
+        }
         
         try {
+            console.log('Sending update to server:', { [field]: value });
             const updateData = { [field]: value };
             const response = await axios.put(
                 `${import.meta.env.VITE_API_URL}/tickets/${id}`,
@@ -179,6 +195,7 @@ export default function TicketDetail() {
                 { withCredentials: true }
             );
             
+            console.log('Server response:', response.data);
             setTicket(response.data.ticket);
             
             // Reset the edit fields
@@ -186,6 +203,7 @@ export default function TicketDetail() {
             if (field === 'description') setEditDescription('');
             
         } catch (err) {
+            console.error('Update error:', err);
             setError(err.response?.data?.msg || `Error updating ticket ${field}`);
         }
     };
@@ -320,16 +338,20 @@ export default function TicketDetail() {
 
                     {/* Support Line - admin only */}
                     {currentUser && currentUser.role === 'admin' && (
-                        <div className="form-group">
+                        <div className="form-group support-line-select">
                             <label htmlFor="supportLine">Support Level</label>
                             <select
                                 id="supportLine"
                                 value={supportLine || ticket.supportLine}
                                 onChange={(e) => {
+                                    console.log('Support line select changed to:', e.target.value);
+                                    console.log('Previous supportLine state:', supportLine);
+                                    console.log('Previous ticket.supportLine:', ticket.supportLine);
                                     setSupportLine(e.target.value);
                                     handleTicketUpdate('supportLine', e.target.value);
                                 }}
                                 required
+                                className="edit-priority-select"
                             >
                                 <option value="first-line">First Line Support</option>
                                 <option value="second-line">Second Line Support</option>

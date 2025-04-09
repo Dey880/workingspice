@@ -18,7 +18,6 @@ export default function Dashboard() {
                 const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, { 
                     withCredentials: true 
                 });
-                console.log(userResponse)
                 setUser(userResponse.data.user);
 
                 // Filter tickets based on role

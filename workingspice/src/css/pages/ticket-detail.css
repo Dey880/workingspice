@@ -329,3 +329,29 @@
     background-color: #e8f5e9;
     color: #1b5e20;
 }
+
+.support-line-select select {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  appearance: none;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.support-line-select select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(42, 101, 146, 0.1);
+}
+
+.support-line-select .field-hint {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}

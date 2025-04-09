@@ -9,6 +9,7 @@ import CreateTicket from './pages/CreateTicket';
 import LandingPage from './pages/LandingPage';
 import NotFound from './pages/NotFound';
 import AdminPortal from './pages/AdminPortal';
+import HelpGuide from './pages/HelpGuide';
 import { useSettings } from './contexts/SettingsContext';
 import { useEffect } from 'react';
 
@@ -32,7 +33,7 @@ export default function App() {
         <Route path='/tickets/:id' element={<TicketDetail />} />
         <Route path='/create-ticket' element={<CreateTicket />} />
         <Route path='/admin' element={<AdminPortal />} />
-
+        <Route path='/help' element={<HelpGuide />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </div>
