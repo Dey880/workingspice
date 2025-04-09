@@ -39,7 +39,7 @@ export default function Navbar() {
                     <>
                         {user ? (
                             <>
-                                {user.role === 'admin' && (
+                                {(user.role === 'admin' || user.role === "first-line" || user.role === "second-line") && (
                                     <Link 
                                         to="/dashboard"
                                         className={location.pathname === '/dashboard' ? 'active' : ''}

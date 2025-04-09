@@ -18,10 +18,12 @@ export default function Dashboard() {
                 const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/auth/user`, { 
                     withCredentials: true 
                 });
+                console.log(userResponse)
                 setUser(userResponse.data.user);
 
                 // Filter tickets based on role
                 if (userResponse.data.user.role === 'first-line') {
+                    // First-line users should see all tickets in their support line
                     const ticketsResponse = await axios.get(
                         `${import.meta.env.VITE_API_URL}/tickets?supportLine=first-line`, 
                         { withCredentials: true }

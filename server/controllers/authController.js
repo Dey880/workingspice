@@ -105,6 +105,39 @@ const authController = {
             console.error(err);
             res.status(500).json({ msg: "Internal server error" });
         }
+    },
+    getStaffByRole: async (req, res) => {
+        try {
+            const { role } = req.query;
+            
+            // Validate role
+            if (!['first-line', 'second-line'].includes(role)) {
+                return res.status(400).json({ msg: "Invalid role specified" });
+            }
+            
+            // Verify user is authorized
+            if (!['admin', 'first-line', 'second-line'].includes(req.user.role)) {
+                return res.status(403).json({ msg: "Not authorized" });
+            }
+            
+            // First-line users can only see first-line staff
+            if (req.user.role === 'first-line' && role !== 'first-line') {
+                return res.status(403).json({ msg: "Not authorized to view this staff list" });
+            }
+            
+            // Second-line users can only see second-line staff
+            if (req.user.role === 'second-line' && role !== 'second-line') {
+                return res.status(403).json({ msg: "Not authorized to view this staff list" });
+            }
+            
+            // Get staff members with the specified role
+            const staff = await User.find({ role }).select('_id username email');
+            
+            res.status(200).json({ staff });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: "Server error" });
+        }
     }
 };
 

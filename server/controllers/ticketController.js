@@ -4,15 +4,22 @@ const User = require("../models/User");
 const ticketController = {
   createTicket: async (req, res) => {
     try {
-      const { title, description, priority, assignedTo } = req.body;
+      const { title, description, priority, supportLine, assignedTo } = req.body;
 
-      const ticket = new Ticket({
+      const ticketData = {
         title,
         description,
         priority: priority || "choose priority",
+        supportLine: supportLine || "first-line",
         createdBy: req.user.id,
-        assignedTo: assignedTo || null,
-      });
+      };
+
+      // Only add assignedTo if it's a valid ObjectId
+      if (assignedTo && mongoose.Types.ObjectId.isValid(assignedTo)) {
+        ticketData.assignedTo = assignedTo;
+      }
+
+      const ticket = new Ticket(ticketData);
 
       await ticket.save();
       res.status(201).json({ msg: "Ticket created successfully", ticket });
@@ -31,6 +38,20 @@ const ticketController = {
       // Add supportLine filter if provided
       if (req.query.supportLine) {
         query.supportLine = req.query.supportLine;
+      }
+      
+      // Add assignedTo filter if provided and valid
+      if (req.query.assignedTo && req.query.assignedTo !== 'undefined' && req.query.assignedTo !== 'null') {
+        try {
+          // Verify it's a valid ObjectId before adding to query
+          const mongoose = require('mongoose');
+          if (mongoose.Types.ObjectId.isValid(req.query.assignedTo)) {
+            query.assignedTo = req.query.assignedTo;
+          }
+        } catch (err) {
+          console.error('Invalid assignedTo parameter:', err);
+          // Continue without the assignedTo filter if invalid
+        }
       }
       
       // First line and second line users can only see tickets assigned to their line
@@ -95,7 +116,7 @@ const ticketController = {
       }
 
       if (
-        !['admin', 'admin'].includes(req.user.role) && 
+        !['admin'].includes(req.user.role) && 
         req.body.supportLine
       ) {
         // If not admin, remove supportLine from the update fields

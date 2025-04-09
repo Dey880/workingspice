@@ -55,12 +55,23 @@ export default function TicketDetail() {
                 setUser(userResponse.data.user);
                 setCurrentUser(userResponse.data.user);
 
-                // If user is admin, fetch admin list
-                if (userResponse.data.user.role === 'admin') {
-                    const adminsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/auth/admins`, {
+                // If user is admin or support staff, fetch relevant staff list
+                if (['admin', 'first-line', 'second-line'].includes(userResponse.data.user.role)) {
+                    let endpoint = '/auth/admins'; // Default endpoint for admins
+                    
+                    // For first-line, get first-line staff
+                    if (userResponse.data.user.role === 'first-line') {
+                        endpoint = '/auth/staff?role=first-line';
+                    }
+                    // For second-line, get second-line staff
+                    else if (userResponse.data.user.role === 'second-line') {
+                        endpoint = '/auth/staff?role=second-line';
+                    }
+                    
+                    const staffResponse = await axios.get(`${import.meta.env.VITE_API_URL}${endpoint}`, {
                         withCredentials: true
                     });
-                    setAdmins(adminsResponse.data.admins);
+                    setAdmins(staffResponse.data.admins || staffResponse.data.staff);
                 }
 
                 // Fetch ticket and comments
@@ -91,6 +102,13 @@ export default function TicketDetail() {
             return () => clearInterval(intervalId);
         }
     }, [loading, error, id]);
+
+    // Update the supportLine state when the ticket loads
+    useEffect(() => {
+        if (ticket) {
+            setSupportLine(ticket.supportLine || 'first-line');
+        }
+    }, [ticket]);
 
     // Add new comment
     const handleAddComment = async (e) => {
@@ -200,29 +218,33 @@ export default function TicketDetail() {
                 <p>{ticket.description}</p>
             </div>
             
-            {/* Admin actions */}
-            {user?.role === 'admin' && (
+            {/* Ticket Management Actions */}
+            {user?.role === 'admin' || user?.role === 'first-line' || user?.role === 'second-line' ? (
                 <div className="admin-actions">
-                    <h3>Admin Actions</h3>
+                    <h3>{user?.role === 'admin' ? 'Admin Actions' : 'Support Actions'}</h3>
                     
-                    {/* Assign to admin dropdown */}
-                    <div className="assign-admin">
-                        <label htmlFor="assign-admin">Assign to:</label>
-                        <select 
-                            id="assign-admin" 
-                            value={ticket.assignedTo?._id || "unassigned"}
-                            onChange={handleAssignTicket}
-                        >
-                            <option value="unassigned">Unassigned</option>
-                            {admins.map(admin => (
-                                <option key={admin._id} value={admin._id}>
-                                    {admin.username}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {/* Assign to staff dropdown - available to all support staff */}
+                    {(user?.role === 'admin' || 
+                      (user?.role === 'first-line' && ticket.supportLine === 'first-line') ||
+                      (user?.role === 'second-line' && ticket.supportLine === 'second-line')) && (
+                        <div className="assign-admin">
+                            <label htmlFor="assign-admin">Assign to:</label>
+                            <select 
+                                id="assign-admin" 
+                                value={ticket.assignedTo?._id || "unassigned"}
+                                onChange={handleAssignTicket}
+                            >
+                                <option value="unassigned">Unassigned</option>
+                                {admins.map(admin => (
+                                    <option key={admin._id} value={admin._id}>
+                                        {admin.username}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     
-                    {/* Edit ticket properties */}
+                    {/* Edit ticket properties - available to all support staff */}
                     <div className="edit-ticket-properties">
                         <h3>Edit Ticket</h3>
                         
@@ -241,7 +263,7 @@ export default function TicketDetail() {
                             </select>
                         </div>
                         
-                        {/* Edit title */}
+                        {/* Edit title - available to all support staff */}
                         <div className="edit-title">
                             <label htmlFor="edit-title">Title:</label>
                             <input
@@ -253,7 +275,7 @@ export default function TicketDetail() {
                             <button onClick={() => handleTicketUpdate('title', editTitle)}>Update Title</button>
                         </div>
                         
-                        {/* Edit description */}
+                        {/* Edit description - available to all support staff */}
                         <div className="edit-description">
                             <label htmlFor="edit-description">Description:</label>
                             <textarea
@@ -261,10 +283,13 @@ export default function TicketDetail() {
                                 value={editDescription || ticket.description}
                                 onChange={(e) => setEditDescription(e.target.value)}
                             ></textarea>
-                            <button onClick={() => handleTicketUpdate('description', editDescription)}>Update Description</button>
+                            <button onClick={() => handleTicketUpdate('description', editDescription)}>
+                                Update Description
+                            </button>
                         </div>
                     </div>
                     
+                    {/* Status updates - available to all support staff */}
                     <h3>Update Status</h3>
                     <div className="status-buttons">
                         <button 
@@ -293,14 +318,17 @@ export default function TicketDetail() {
                         </button>
                     </div>
 
-                    {/* Support Level */}
-                    {currentUser && ['admin'].includes(currentUser.role) && (
+                    {/* Support Line - admin only */}
+                    {currentUser && currentUser.role === 'admin' && (
                         <div className="form-group">
                             <label htmlFor="supportLine">Support Level</label>
                             <select
                                 id="supportLine"
-                                value={supportLine}
-                                onChange={(e) => setSupportLine(e.target.value)}
+                                value={supportLine || ticket.supportLine}
+                                onChange={(e) => {
+                                    setSupportLine(e.target.value);
+                                    handleTicketUpdate('supportLine', e.target.value);
+                                }}
                                 required
                             >
                                 <option value="first-line">First Line Support</option>
@@ -312,7 +340,7 @@ export default function TicketDetail() {
                         </div>
                     )}
                 </div>
-            )}
+            ) : null}
             
             {/* Add comment form */}
             <div className="add-comment">
