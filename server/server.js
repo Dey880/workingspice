@@ -17,7 +17,10 @@ const maintenanceMode = require('./middleware/maintenanceMode');
 
 const app = express();
 
-app.use(helmet());
+// Update Helmet configuration to allow cross-origin interactions
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: "unsafe-none" }
+}));
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
