@@ -4,16 +4,30 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const settingsRoutes = require('./routes/settingsRoutes'); // Add this line
+const settingsRoutes = require('./routes/settingsRoutes');
 const maintenanceMode = require('./middleware/maintenanceMode');
 
 const app = express();
+
+app.use(helmet());
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again after 15 minutes'
+});
+
+app.use('/api', apiLimiter);
 
 let corsOptions = {
     origin: process.env.FRONTEND_URL,
@@ -37,7 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/settings', settingsRoutes); // Add this line
+app.use('/api/settings', settingsRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');

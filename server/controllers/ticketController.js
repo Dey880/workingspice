@@ -2,7 +2,6 @@ const Ticket = require("../models/Ticket");
 const User = require("../models/User");
 
 const ticketController = {
-  // Create a new ticket
   createTicket: async (req, res) => {
     try {
       const { title, description, priority, assignedTo } = req.body;
@@ -10,7 +9,7 @@ const ticketController = {
       const ticket = new Ticket({
         title,
         description,
-        priority: priority || "medium",
+        priority: priority || "choose priority",
         createdBy: req.user.id,
         assignedTo: assignedTo || null,
       });

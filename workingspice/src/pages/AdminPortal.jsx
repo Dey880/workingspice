@@ -528,6 +528,7 @@ export default function AdminPortal() {
                                         <option value="medium">Medium</option>
                                         <option value="high">High</option>
                                         <option value="critical">Critical</option>
+                                        <option value="choose priority">Choose priority</option>
                                     </select>
                                 </div>
                                 

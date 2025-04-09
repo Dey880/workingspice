@@ -38,7 +38,7 @@ export default function CreateTicket() {
             }
             
             const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/tickets`, 
+                `${import.meta.env.VITE_API_URL}/tickets`, 
                 ticketData,
                 { withCredentials: true }
             );
@@ -99,55 +99,6 @@ export default function CreateTicket() {
                     ></textarea>
                 </div>
                 
-                <div className="form-group">
-                    <label>Priority</label>
-                    <div className="priority-options">
-                        <div className="priority-option">
-                            <input
-                                type="radio"
-                                id="priority-low"
-                                name="priority"
-                                value="low"
-                                checked={priority === 'low'}
-                                onChange={() => setPriority('low')}
-                            />
-                            <label htmlFor="priority-low">Low</label>
-                        </div>
-                        <div className="priority-option">
-                            <input
-                                type="radio"
-                                id="priority-medium"
-                                name="priority"
-                                value="medium"
-                                checked={priority === 'medium'}
-                                onChange={() => setPriority('medium')}
-                            />
-                            <label htmlFor="priority-medium">Medium</label>
-                        </div>
-                        <div className="priority-option">
-                            <input
-                                type="radio"
-                                id="priority-high"
-                                name="priority"
-                                value="high"
-                                checked={priority === 'high'}
-                                onChange={() => setPriority('high')}
-                            />
-                            <label htmlFor="priority-high">High</label>
-                        </div>
-                        <div className="priority-option">
-                            <input
-                                type="radio"
-                                id="priority-critical"
-                                name="priority"
-                                value="critical"
-                                checked={priority === 'critical'}
-                                onChange={() => setPriority('critical')}
-                            />
-                            <label htmlFor="priority-critical">Critical</label>
-                        </div>
-                    </div>
-                </div>
                 
                 <div className="form-actions">
                     <button 

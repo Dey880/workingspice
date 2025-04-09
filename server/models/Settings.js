@@ -20,7 +20,7 @@ const SettingsSchema = new Schema({
   },
   defaultTicketPriority: { 
     type: String, 
-    enum: ['low', 'medium', 'high', 'critical'],
+    enum: ['low', 'medium', 'high', 'critical', 'choose priority'],
     default: 'medium'
   },
   ticketCategoriesEnabled: { 

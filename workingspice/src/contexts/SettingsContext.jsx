@@ -61,7 +61,7 @@ export function SettingsProvider({ children }) {
           ? `${apiUrl}/settings/public` 
           : `${apiUrl}/api/settings/public`;
         
-        const response = await axios.get(url);
+        const response = await axios.get(url, { withCredentials: true });
         
         if (response.data && response.data.settings) {
           setSettings(response.data.settings);
