@@ -22,13 +22,30 @@ const ticketController = {
     }
   },
 
-  // Get all tickets
+  // Get all tickets or filter by support line
   getAllTickets: async (req, res) => {
     try {
-      const tickets = await Ticket.find()
-        .populate("createdBy", "username email")
-        .populate("assignedTo", "username email");
-
+      // Build query based on parameters
+      const query = {};
+      
+      // Add supportLine filter if provided
+      if (req.query.supportLine) {
+        query.supportLine = req.query.supportLine;
+      }
+      
+      // First line and second line users can only see tickets assigned to their line
+      if (req.user.role === 'first-line') {
+        query.supportLine = 'first-line';
+      } else if (req.user.role === 'second-line') {
+        query.supportLine = 'second-line';
+      }
+      
+      // Get tickets with populated references
+      const tickets = await Ticket.find(query)
+        .populate('createdBy', 'username email')
+        .populate('assignedTo', 'username email')
+        .sort({ createdAt: -1 });
+        
       res.status(200).json({ tickets });
     } catch (err) {
       console.error(err);
@@ -65,14 +82,24 @@ const ticketController = {
         return res.status(404).json({ msg: "Ticket not found" });
       }
 
-      // Check if user is authorized (admin or ticket creator)
+      // Check if user is authorized (creator, admin, or appropriate line support)
       if (
         ticket.createdBy.toString() !== req.user.id.toString() &&
-        req.user.role !== "admin"
+        req.user.role !== "admin" &&
+        !(req.user.role === "first-line" && ticket.supportLine === "first-line") &&
+        !(req.user.role === "second-line" && ticket.supportLine === "second-line")
       ) {
         return res
           .status(403)
           .json({ msg: "Not authorized to update this ticket" });
+      }
+
+      if (
+        !['admin', 'admin'].includes(req.user.role) && 
+        req.body.supportLine
+      ) {
+        // If not admin, remove supportLine from the update fields
+        delete req.body.supportLine;
       }
 
       const updatedTicket = await Ticket.findByIdAndUpdate(
@@ -109,10 +136,12 @@ const ticketController = {
         return res.status(404).json({ msg: "Ticket not found" });
       }
       
-      // Check if user is authorized (admin or ticket creator)
+      // Check if user is authorized (creator, admin, or appropriate line support)
       if (
         ticket.createdBy.toString() !== req.user.id.toString() &&
-        req.user.role !== "admin"
+        req.user.role !== "admin" &&
+        !(req.user.role === "first-line" && ticket.supportLine === "first-line") &&
+        !(req.user.role === "second-line" && ticket.supportLine === "second-line")
       ) {
         return res
         .status(403)

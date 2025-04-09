@@ -20,18 +20,32 @@ export default function Dashboard() {
                 });
                 setUser(userResponse.data.user);
 
-                // Check if admin
-                if (userResponse.data.user.role !== 'admin') {
-                    // Redirect to profile page if not admin
-                    navigate('/profile');
-                    return;
+                // Filter tickets based on role
+                if (userResponse.data.user.role === 'first-line') {
+                    const ticketsResponse = await axios.get(
+                        `${import.meta.env.VITE_API_URL}/tickets?supportLine=first-line`, 
+                        { withCredentials: true }
+                    );
+                    setTickets(ticketsResponse.data.tickets);
+                } 
+                else if (userResponse.data.user.role === 'second-line') {
+                    const ticketsResponse = await axios.get(
+                        `${import.meta.env.VITE_API_URL}/tickets?supportLine=second-line`, 
+                        { withCredentials: true }
+                    );
+                    setTickets(ticketsResponse.data.tickets);
                 }
-
-                // Fetch all tickets for admin
-                const ticketsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { 
-                    withCredentials: true 
-                });
-                setTickets(ticketsResponse.data.tickets);
+                else if (['admin'].includes(userResponse.data.user.role)) {
+                    // Admins can see all tickets but not process them
+                    const ticketsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { 
+                        withCredentials: true 
+                    });
+                    setTickets(ticketsResponse.data.tickets);
+                } 
+                else {
+                    // Regular users see their profile
+                    navigate('/profile');
+                }
             } catch (err) {
                 setError(err.response?.data?.msg || 'Error loading dashboard');
                 // Redirect to login if unauthorized

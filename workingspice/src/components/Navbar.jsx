@@ -53,7 +53,7 @@ export default function Navbar() {
                                 >
                                     Profile
                                 </Link>
-                                {user.role === 'owner' && (
+                                {user.role === 'admin' && (
                                     <Link 
                                         to="/admin"
                                         className={location.pathname === '/admin' ? 'active' : ''}

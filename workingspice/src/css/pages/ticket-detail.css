@@ -310,3 +310,22 @@
   color: white;
   border-color: var(--primary);
 }
+
+/* Support line badges */
+.support-line {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.support-line.first-line {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+}
+
+.support-line.second-line {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}

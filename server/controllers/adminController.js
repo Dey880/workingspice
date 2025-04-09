@@ -7,9 +7,9 @@ const adminController = {
   // Get all users
   getAllUsers: async (req, res) => {
     try {
-      // Check if requester is owner
-      if (req.user.role !== 'owner') {
-        return res.status(403).json({ msg: "Not authorized. Owner access required." });
+      // Check if requester is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
       const users = await User.find().select('-password');
@@ -25,13 +25,13 @@ const adminController = {
     try {
       const { userId, newRole } = req.body;
       
-      // Check if requester is owner
-      if (req.user.role !== 'owner') {
-        return res.status(403).json({ msg: "Not authorized. Owner access required." });
+      // Check if requester is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
       // Validate role
-      if (!['user', 'admin'].includes(newRole)) {
+      if (!['user', 'first-line', 'second-line', 'admin'].includes(newRole)) {
         return res.status(400).json({ msg: "Invalid role specified" });
       }
       
@@ -41,9 +41,44 @@ const adminController = {
         return res.status(404).json({ msg: "User not found" });
       }
       
-      // Don't allow changing owner's role
-      if (user.role === 'owner') {
-        return res.status(403).json({ msg: "Cannot change owner's role" });
+      // Update user role
+      user.role = newRole;
+      await user.save();
+      
+      res.status(200).json({ 
+        msg: `Successfully updated ${user.username} to ${newRole}`, 
+        user: { ...user.toObject(), password: undefined } 
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  },
+  
+  // Update user role to first or second line
+  updateUserLine: async (req, res) => {
+    try {
+      const { userId, newRole } = req.body;
+      
+      // Check if requester is admin
+      if (!['admin'].includes(req.user.role)) {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
+      }
+      
+      // Validate role
+      if (!['user', 'first-line', 'second-line'].includes(newRole)) {
+        return res.status(400).json({ msg: "Invalid role specified" });
+      }
+      
+      // Find user to update
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+      
+      // Don't allow changing admin 
+      if (['admin'].includes(user.role)) {
+        return res.status(403).json({ msg: "Cannot change admin roles" });
       }
       
       // Update user role
@@ -63,9 +98,9 @@ const adminController = {
   // Get platform settings
   getSettings: async (req, res) => {
     try {
-      // Only allow owner and admins
-      if (!['owner', 'admin'].includes(req.user.role)) {
-        return res.status(403).json({ msg: "Not authorized" });
+      // Only allow admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
       const settings = await Settings.getSettings();
@@ -79,9 +114,9 @@ const adminController = {
   // Update platform settings
   updateSettings: async (req, res) => {
     try {
-      // Only allow owner
-      if (req.user.role !== 'owner') {
-        return res.status(403).json({ msg: "Not authorized. Owner access required." });
+      // Only allow admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
       const updates = req.body;
@@ -116,9 +151,9 @@ const adminController = {
   // Get platform statistics for dashboard
   getStatistics: async (req, res) => {
     try {
-      // Only allow owner and admins
-      if (!['owner', 'admin'].includes(req.user.role)) {
-        return res.status(403).json({ msg: "Not authorized" });
+      // Only allow admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
       // Calculate statistics
@@ -149,6 +184,73 @@ const adminController = {
         ticketStats,
         commentCount
       });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  },
+  
+  // Get line-specific statistics
+  getLineStatistics: async (req, res) => {
+    try {
+      // Only allow admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
+      }
+      
+      // Calculate line-specific statistics
+      const firstLineStats = {
+        total: await Ticket.countDocuments({ supportLine: 'first-line' }),
+        open: await Ticket.countDocuments({ supportLine: 'first-line', status: 'open' }),
+        inProgress: await Ticket.countDocuments({ supportLine: 'first-line', status: 'in-progress' }),
+        resolved: await Ticket.countDocuments({ supportLine: 'first-line', status: 'resolved' }),
+        closed: await Ticket.countDocuments({ supportLine: 'first-line', status: 'closed' })
+      };
+      
+      const secondLineStats = {
+        total: await Ticket.countDocuments({ supportLine: 'second-line' }),
+        open: await Ticket.countDocuments({ supportLine: 'second-line', status: 'open' }),
+        inProgress: await Ticket.countDocuments({ supportLine: 'second-line', status: 'in-progress' }),
+        resolved: await Ticket.countDocuments({ supportLine: 'second-line', status: 'resolved' }),
+        closed: await Ticket.countDocuments({ supportLine: 'second-line', status: 'closed' })
+      };
+      
+      const userCounts = {
+        firstLine: await User.countDocuments({ role: 'first-line' }),
+        secondLine: await User.countDocuments({ role: 'second-line' })
+      };
+      
+      res.status(200).json({
+        firstLineStats,
+        secondLineStats,
+        userCounts
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  },
+  
+  // Search users by email
+  searchUsersByEmail: async (req, res) => {
+    try {
+      // Check if requester is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ msg: "Not authorized. Admin access required." });
+      }
+      
+      const { email } = req.query;
+      
+      if (!email) {
+        return res.status(400).json({ msg: "Email parameter is required" });
+      }
+      
+      // Search for users with emails containing the search term (case insensitive)
+      const users = await User.find({
+        email: { $regex: email, $options: 'i' }
+      }).select('-password');
+      
+      res.status(200).json({ users });
     } catch (err) {
       console.error(err);
       res.status(500).json({ msg: "Internal server error" });

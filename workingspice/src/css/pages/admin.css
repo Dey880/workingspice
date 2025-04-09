@@ -204,13 +204,18 @@
   font-weight: 500;
 }
 
-.users-table .role-badge.owner {
+.users-table .role-badge.admin {
   background-color: #6c5ce7;
   color: white;
 }
 
-.users-table .role-badge.admin {
-  background-color: var(--secondary);
+.users-table .role-badge.first-line {
+  background-color: #00b894;
+  color: white;
+}
+
+.users-table .role-badge.second-line {
+  background-color: #0984e3;
   color: white;
 }
 
@@ -372,4 +377,86 @@
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
   margin-top: var(--spacing-md);
+}
+
+/* User search and role application */
+.user-search-section, .search-results, .recent-users-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--background);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.search-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.search-button:disabled {
+  background-color: var(--disabled);
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: var(--error);
+  margin-top: 0.5rem;
+}
+
+.no-results {
+  padding: 1rem;
+  background-color: var(--background-light);
+  border-radius: 4px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.role-select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: white;
+}
+
+.apply-role-button {
+  padding: 6px 12px;
+  background-color: var(--success);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.apply-role-button:hover {
+  background-color: var(--success-dark);
+}
+
+.apply-role-button:disabled {
+  background-color: var(--disabled);
+  cursor: not-allowed;
 }

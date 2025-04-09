@@ -29,10 +29,12 @@ const apiLimiter = rateLimit({
 
 app.use('/api', apiLimiter);
 
+// Updated CORS configuration
 let corsOptions = {
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,PUT,POST,DELETE',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 

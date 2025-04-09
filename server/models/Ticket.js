@@ -15,6 +15,11 @@ const TicketSchema = new Schema({
     default: "choose priority",
   },
   category: { type: String },
+  supportLine: {
+    type: String,
+    enum: ["first-line", "second-line"],
+    default: "first-line",
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

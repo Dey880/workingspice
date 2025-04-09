@@ -30,6 +30,7 @@ export default function CreateTicket() {
                 title,
                 description,
                 priority,
+                supportLine: 'first-line', // Default to first-line, only admins can change this
             };
             
             // Add category if enabled
@@ -98,7 +99,6 @@ export default function CreateTicket() {
                         rows="5"
                     ></textarea>
                 </div>
-                
                 
                 <div className="form-actions">
                     <button 

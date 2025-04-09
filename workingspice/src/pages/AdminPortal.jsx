@@ -19,10 +19,16 @@ export default function AdminPortal() {
     const [updatingSettings, setUpdatingSettings] = useState(false);
     const [settingsUpdateMsg, setSettingsUpdateMsg] = useState('');
     const [newCategory, setNewCategory] = useState('');
+    const [searchEmail, setSearchEmail] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [searchError, setSearchError] = useState('');
+    const [searchAttempted, setSearchAttempted] = useState(false);
+    const [selectedRoles, setSelectedRoles] = useState({});
     
     const navigate = useNavigate();
 
-    // Fetch current user and verify owner permissions
+    // Fetch current user and verify admin permissions
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -32,8 +38,8 @@ export default function AdminPortal() {
                 });
                 setUser(userResponse.data.user);
 
-                // Check if owner - if not, redirect to dashboard
-                if (userResponse.data.user.role !== 'owner') {
+                // Check if admin - if not, redirect to dashboard
+                if (userResponse.data.user.role !== 'admin') {
                     navigate('/dashboard');
                     return;
                 }
@@ -198,6 +204,44 @@ export default function AdminPortal() {
             ...settings,
             ticketCategories: settings.ticketCategories.filter(c => c !== category)
         });
+    };
+
+    // Handle user search
+    const handleUserSearch = async () => {
+        if (!searchEmail.trim()) {
+            setSearchError('Please enter an email address');
+            return;
+        }
+        
+        setSearchLoading(true);
+        setSearchError('');
+        setSearchAttempted(true);
+        
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/admin/users/search?email=${encodeURIComponent(searchEmail)}`,
+                { withCredentials: true }
+            );
+            
+            setSearchResults(response.data.users);
+            
+            if (response.data.users.length === 0) {
+                setSearchError('No users found with that email');
+            }
+        } catch (err) {
+            setSearchError(err.response?.data?.msg || 'Error searching users');
+            setSearchResults([]);
+        } finally {
+            setSearchLoading(false);
+        }
+    };
+
+    // Handle role selection
+    const handleRoleSelection = (userId, role) => {
+        setSelectedRoles(prev => ({
+            ...prev,
+            [userId]: role
+        }));
     };
 
     if (loading) {
@@ -365,68 +409,154 @@ export default function AdminPortal() {
             {activeTab === 'users' && (
                 <div className="admin-content">
                     <h2>User Management</h2>
-                    <p>Manage user roles and permissions for your platform.</p>
+                    <p>Search for users and manage their roles.</p>
                     
                     {roleUpdateMsg && (
                         <div className="settings-success">{roleUpdateMsg}</div>
                     )}
                     
-                    {users.length > 0 ? (
-                        <table className="users-table">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Joined</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(user => (
-                                    <tr key={user._id}>
-                                        <td>{user.username}</td>
-                                        <td>{user.email}</td>
-                                        <td>
-                                            <span className={`role-badge ${user.role}`}>
-                                                {user.role}
-                                            </span>
-                                        </td>
-                                        <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                        <td>
-                                            <div className="role-actions">
-                                                {user.role !== 'owner' && (
-                                                    <>
-                                                        {user.role === 'user' && (
-                                                            <button 
-                                                                className="promote"
-                                                                onClick={() => handleRoleUpdate(user._id, 'admin')}
-                                                                disabled={updatingRole}
-                                                            >
-                                                                Promote to Admin
-                                                            </button>
-                                                        )}
-                                                        
-                                                        {user.role === 'admin' && (
-                                                            <button 
-                                                                className="demote"
-                                                                onClick={() => handleRoleUpdate(user._id, 'user')}
-                                                                disabled={updatingRole}
-                                                            >
-                                                                Demote to User
-                                                            </button>
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
+                    {/* Search section */}
+                    <div className="user-search-section">
+                        <h3>Find User</h3>
+                        <div className="search-container">
+                            <input
+                                type="email"
+                                placeholder="Search by email address..."
+                                value={searchEmail}
+                                onChange={(e) => setSearchEmail(e.target.value)}
+                                className="search-input"
+                            />
+                            <button 
+                                className="search-button"
+                                onClick={handleUserSearch}
+                                disabled={searchLoading}
+                            >
+                                {searchLoading ? 'Searching...' : 'Search'}
+                            </button>
+                        </div>
+                        
+                        {searchError && (
+                            <div className="error-message">{searchError}</div>
+                        )}
+                    </div>
+                    
+                    {/* Search results and role management */}
+                    {searchResults.length > 0 && (
+                        <div className="search-results">
+                            <h3>Search Results</h3>
+                            <table className="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Current Role</th>
+                                        <th>Change Role</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No users found. Please refresh to try again.</p>
+                                </thead>
+                                <tbody>
+                                    {searchResults.map(user => (
+                                        <tr key={user._id}>
+                                            <td>{user.username}</td>
+                                            <td>{user.email}</td>
+                                            <td>
+                                                <span className={`role-badge ${user.role}`}>
+                                                    {user.role}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <select
+                                                    value={selectedRoles[user._id] || user.role}
+                                                    onChange={(e) => handleRoleSelection(user._id, e.target.value)}
+                                                    disabled={updatingRole}
+                                                    className="role-select"
+                                                >
+                                                    <option value="user">Regular User</option>
+                                                    <option value="first-line">First Line Support</option>
+                                                    <option value="second-line">Second Line Support</option>
+                                                    <option value="admin">Administrator</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                {selectedRoles[user._id] && selectedRoles[user._id] !== user.role && (
+                                                    <button
+                                                        className="apply-role-button"
+                                                        onClick={() => handleRoleUpdate(user._id, selectedRoles[user._id])}
+                                                        disabled={updatingRole}
+                                                    >
+                                                        {updatingRole ? 'Updating...' : 'Apply Change'}
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
+                    
+                    {searchAttempted && searchResults.length === 0 && !searchLoading && (
+                        <div className="no-results">
+                            <p>No users found matching the email address. Please try again.</p>
+                        </div>
+                    )}
+                    
+                    {/* Recent users section */}
+                    <div className="recent-users-section">
+                        <h3>Recent Users</h3>
+                        {users.length > 0 ? (
+                            <table className="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Current Role</th>
+                                        <th>Change Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.slice(0, 5).map(user => (
+                                        <tr key={user._id}>
+                                            <td>{user.username}</td>
+                                            <td>{user.email}</td>
+                                            <td>
+                                                <span className={`role-badge ${user.role}`}>
+                                                    {user.role}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <select
+                                                    value={selectedRoles[user._id] || user.role}
+                                                    onChange={(e) => handleRoleSelection(user._id, e.target.value)}
+                                                    disabled={updatingRole}
+                                                    className="role-select"
+                                                >
+                                                    <option value="user">Regular User</option>
+                                                    <option value="first-line">First Line Support</option>
+                                                    <option value="second-line">Second Line Support</option>
+                                                    <option value="admin">Administrator</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                {selectedRoles[user._id] && selectedRoles[user._id] !== user.role && (
+                                                    <button
+                                                        className="apply-role-button"
+                                                        onClick={() => handleRoleUpdate(user._id, selectedRoles[user._id])}
+                                                        disabled={updatingRole}
+                                                    >
+                                                        {updatingRole ? 'Updating...' : 'Apply Change'}
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>No recent users found. Please refresh to try again.</p>
+                        )}
+                    </div>
                 </div>
             )}
             

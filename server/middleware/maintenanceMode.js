@@ -16,7 +16,7 @@ const maintenanceMode = async (req, res, next) => {
       return next();
     }
     
-    // Check if user is an admin or owner
+    // Check if user is an admin
     const token = req.cookies.jwt;
     if (!token) {
       return res.status(503).json({ 
@@ -28,8 +28,8 @@ const maintenanceMode = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findOne({ email: decoded.email });
       
-      if (user && ['admin', 'owner'].includes(user.role)) {
-        // Allow admins and owners to access the site during maintenance
+      if (user && ['admin'].includes(user.role)) {
+        // Allow admins to access the site during maintenance
         return next();
       }
     } catch (err) {

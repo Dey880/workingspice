@@ -12,6 +12,8 @@ export default function TicketDetail() {
     const [error, setError] = useState(null);
     const [editTitle, setEditTitle] = useState('');
     const [editDescription, setEditDescription] = useState('');
+    const [currentUser, setCurrentUser] = useState(null);
+    const [supportLine, setSupportLine] = useState('first-line');
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -51,6 +53,7 @@ export default function TicketDetail() {
                     withCredentials: true 
                 });
                 setUser(userResponse.data.user);
+                setCurrentUser(userResponse.data.user);
 
                 // If user is admin, fetch admin list
                 if (userResponse.data.user.role === 'admin') {
@@ -289,6 +292,25 @@ export default function TicketDetail() {
                             Closed
                         </button>
                     </div>
+
+                    {/* Support Level */}
+                    {currentUser && ['admin'].includes(currentUser.role) && (
+                        <div className="form-group">
+                            <label htmlFor="supportLine">Support Level</label>
+                            <select
+                                id="supportLine"
+                                value={supportLine}
+                                onChange={(e) => setSupportLine(e.target.value)}
+                                required
+                            >
+                                <option value="first-line">First Line Support</option>
+                                <option value="second-line">Second Line Support</option>
+                            </select>
+                            <div className="field-hint">
+                                Admin only: Assign this ticket to the appropriate support line
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
             
