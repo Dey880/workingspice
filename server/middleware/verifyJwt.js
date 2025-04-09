@@ -13,14 +13,16 @@ async function verifyJwt(req, res, next) {
         req.user = decoded;
         const user = await User.findOne({ email: decoded.email });
 
-        console.log(user);
         if (!user) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-
+        
         req.user.id = user._id;
         next();
     } catch (error) {
+        console.log(user);
+        console.log(token);
+        console.log(decoded);
         return res.status(401).json({ message: 'Unauthorized' });
     }
 }
