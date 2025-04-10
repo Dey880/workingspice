@@ -156,9 +156,13 @@ const adminController = {
         return res.status(403).json({ msg: "Not authorized. Admin access required." });
       }
       
-      // Calculate statistics
+      // Calculate statistics with separate counts for each role
       const totalUsers = await User.countDocuments();
       const adminCount = await User.countDocuments({ role: 'admin' });
+      const firstLineCount = await User.countDocuments({ role: 'first-line' });
+      const secondLineCount = await User.countDocuments({ role: 'second-line' });
+      const regularUsers = totalUsers - adminCount - firstLineCount - secondLineCount;
+      
       const ticketStats = {
         total: await Ticket.countDocuments(),
         open: await Ticket.countDocuments({ status: 'open' }),
@@ -178,7 +182,9 @@ const adminController = {
         userStats: {
           total: totalUsers,
           admins: adminCount,
-          users: totalUsers - adminCount,
+          firstLine: firstLineCount,
+          secondLine: secondLineCount,
+          users: regularUsers,
           newest: newestUsers
         },
         ticketStats,

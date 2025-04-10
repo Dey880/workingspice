@@ -10,7 +10,7 @@ export default function AdminPortal() {
     const [users, setUsers] = useState([]);
     const [settings, setSettings] = useState({});
     const [statistics, setStatistics] = useState({
-        userStats: { total: 0, admins: 0, users: 0, newest: [] },
+        userStats: { total: 0, admins: 0, users: 0, firstLine: 0, secondLine: 0, newest: [] },
         ticketStats: { total: 0, open: 0, inProgress: 0, resolved: 0, closed: 0 },
         commentCount: 0
     });
@@ -305,6 +305,8 @@ export default function AdminPortal() {
                             <p>{statistics.userStats.total}</p>
                             <div className="stat-details">
                                 Regular Users: {statistics.userStats.users} | 
+                                First-Line: {statistics.userStats.firstLine} | 
+                                Second-Line: {statistics.userStats.secondLine} | 
                                 Admins: {statistics.userStats.admins}
                             </div>
                         </div>
