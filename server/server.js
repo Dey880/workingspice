@@ -6,7 +6,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
@@ -59,18 +58,9 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
 
-// Serve static files from the Vite build directory
-app.use(express.static(path.join(__dirname, '../workingspice/dist')));
-
-// Catch-all route to serve the frontend for client-side routing
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../workingspice/dist/index.html'));
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
 });
-
-// Remove or comment out the original root route since it's now handled above
-// app.get('/', (req, res) => {
-//     res.send('Hello, World!');
-// });
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
